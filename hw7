@@ -1,0 +1,38 @@
+import concurrent.futures
+import time
+
+def formula_1(x):
+    return x**2 - x**2 + x**4 - x**5 + x + x
+
+def formula_2(x):
+    return x + x
+
+def compute(iterations):
+    results_1 = []
+    results_2 = []
+    
+    start_time_1 = time.time()
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results_1 = list(executor.map(formula_1, range(iterations)))
+    
+    duration_1 = time.time() - start_time_1
+    
+    start_time_2 = time.time()
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results_2 = list(executor.map(formula_2, range(iterations)))
+    
+    duration_2 = time.time() - start_time_2
+    
+    # Вычисление третьей формулы
+    start_time_3 = time.time()
+    total = sum(results_1) + sum(results_2)
+    duration_3 = time.time() - start_time_3
+    
+    return duration_1, duration_2, duration_3, total
+
+# Выполнение вычислений
+for it in [10000, 100000]:
+    durations = compute(it)
+    print(f"Итерации: {it}, Длительность 1: {durations[0]:.4f} сек, Длительность 2: {durations[1]:.4f} сек, Длительность 3: {durations[2]:.4f} сек")
